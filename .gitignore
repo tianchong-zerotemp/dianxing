@@ -1,0 +1,5 @@
+# 挑战赛"答案"文件：含漏洞原文 / 文件位置，严禁公开
+audit_results_*
+*_full.json
+
+# 仅允许公开脱敏后的哈希文件 challenge_hashes_*_public.csv
