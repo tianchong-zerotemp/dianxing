@@ -11,7 +11,7 @@
 [![Critical RCE](https://img.shields.io/badge/Critical-11_零权限RCE-darkred?style=flat-square)](#-审计实绩)
 [![High+Medium](https://img.shields.io/badge/High%2BMedium-7%2C095-orange?style=flat-square)](#-审计实绩)
 [![Languages](https://img.shields.io/badge/Languages-7+-green?style=flat-square)](#-按语言统计)
-[![Recall](https://img.shields.io/badge/Recall_Benchmark-Zero_Miss-brightgreen?style=flat-square)](#-召回率基准测试--7-种语言零遗漏)
+[![Recall](https://img.shields.io/badge/Recall_Benchmark-Zero_Miss-brightgreen?style=flat-square)](#-召回率基准测试--9-种语言零遗漏)
 
 </div>
 
@@ -35,7 +35,7 @@
 
 **公开数据，封存实现。** 以下所有数据均来自点星系统对真实开源项目的实际审计产出，可独立验证。
 
-我们还发起了 [⚔️ 漏洞猎人挑战赛](#️-漏洞猎人挑战赛) — 提前公开漏洞哈希表，用真金白银悬赏遗漏，以最直接的方式接受社区检验。
+我们还发起了 [⚔️ 漏洞猎人挑战赛](#challenge) — 提前公开漏洞哈希表，用真金白银悬赏遗漏，以最直接的方式接受社区检验。
 
 ---
 
@@ -73,7 +73,7 @@
 | [Jenkins](https://github.com/jenkinsci/jenkins) v2.566 | Java | 1,469 | — | 217 | 842 | 111 |
 | [Grav CMS](https://github.com/getgrav/grav) v1.8.0-beta.29 | PHP | 1,215 | 5 | 304 | 658 | 218 |
 | [New API (One API)](https://github.com/Calcium-Ion/new-api) v1.0.0-rc.11 | Go | 774 | — | 120 | 575 | 57 |
-| [1Panel](https://github.com/1Panel-dev/1Panel) v3.2.5 | Go | 751 | — | 232 | 363 | 24 |
+| [AcePanel](https://github.com/acepanel/panel) v3.2.5 | Go | 751 | — | 232 | 363 | 24 |
 | [phpMyAdmin](https://github.com/phpmyadmin/phpmyadmin) v5.2.3 | PHP | 689 | — | 175 | 396 | 92 |
 | ██████████ ██████ | JS | 389 | 1 | 33 | 310 | 15 |
 | [Redash](https://github.com/getredash/redash) v26.3.0 | Python | 290 | — | 80 | 159 | 14 |
@@ -113,7 +113,7 @@
 |------|-------:|--------:|----------:|---------:|-----------|
 | Python | 2 | 2,364 | — | 2,159 | LiteLLM, Redash |
 | Java | 2 | 1,675 | 1 | 1,247 | Jenkins, ██████████ |
-| Go | 4 | 1,750 | 4 | 1,468 | 1Panel, New API, ██████████, █████████ |
+| Go | 4 | 1,750 | 4 | 1,468 | AcePanel, New API, ██████████, █████████ |
 | PHP | 2 | 1,904 | 5 | 1,533 | Grav CMS, phpMyAdmin |
 | JavaScript | 1 | 389 | 1 | 343 | ██████████ |
 | Solidity | 2 | 367 | — | 343 | Aave V4, DVDeFi |
@@ -124,7 +124,7 @@
 这些项目覆盖了多种典型业务场景，代码量从数千行到数百万行不等：
 
 - 🏗️ **基础设施**：Jenkins（全球 CI/CD 基石，23k stars）、██████████
-- 🛠️ **开发者工具**：LiteLLM（LLM 代理网关，20k stars）、Redash（数据分析，26k stars）、1Panel（运维面板，25k stars）
+- 🛠️ **开发者工具**：LiteLLM（LLM 代理网关，20k stars）、Redash（数据分析，26k stars）、AcePanel（运维面板，2.8k stars）
 - 🌐 **Web 应用**：phpMyAdmin（全球最广泛的 MySQL 管理工具）、Grav CMS、██████████
 - ⚡ **API 服务**：New API（LLM API 聚合，23k stars）、█████████、██████████
 - 💎 **DeFi 智能合约**：Aave V4（头部借贷协议）、Damn Vulnerable DeFi
@@ -194,6 +194,8 @@
 
 ---
 
+<a id="challenge"></a>
+
 <div align="center">
 
 # ⚔️ 漏洞猎人挑战赛 ⚔️
@@ -222,10 +224,29 @@
 漏洞描述原文 → SHA-256 → 0x7a3f...b2c1 → Git commit 存证（含时间戳）
 ```
 
-### 📮 提交方式
+### 🔑 哈希验证方式
+
+公开的 CSV 哈希文件中，每条漏洞包含两个哈希值：`record_sha256` 和 `description_sha256`，分别由审计结果的 `record_canonical`（漏洞完整记录）和 `description`（漏洞描述）字段计算 SHA-256 得到。这两个字段包含了该漏洞的详细信息。
+
+**验证步骤：**
+
+1. 收到我们的邮件回复后，从附件 CSV 中取出匹配记录的 `record_canonical` 或 `description` 字段原文
+2. 对该原文计算 SHA-256，得到哈希值
+3. 将计算结果与我们提前发布在 GitHub 的公开哈希表（`record_sha256` / `description_sha256`）进行比对
+4. 若一致，即可证明该漏洞记录在挑战窗口开放前已存在于审计清单中
+
+```
+邮件附件 CSV 中的原文 → SHA-256 → 与 GitHub 公开哈希表比对 → 验证预先存证
+```
+
+> 每条漏洞记录对应两个可独立验证的哈希（record_sha256 + description_sha256），任一匹配即视为命中。
+
+### 📮 提交与反馈方式
 
 - 💬 **公开提交**：在本仓库 Discussion 区发帖（仅描述漏洞类型与影响，不含利用细节）
 - 🔒 **私密提交**：发送至 tianchong-zerotemp@foxmail.com（适用于不宜公开的漏洞）
+
+收到提交后，我们将通过邮件回复反馈结果，附件包含匹配说明文档（Markdown 格式）及对应的 CSV 文件。CSV 中包含 `record_canonical` 和 `description` 字段原文，提交者可自行计算 SHA-256 与公开哈希表比对核验。
 
 ### 📜 有效漏洞标准（四条，需全部满足）
 
@@ -337,6 +358,12 @@ flowchart LR
 | 轮次 | 目标项目 | 哈希条数 | 哈希文件 | 挑战状态 |
 |------|----------|--------:|----------|----------|
 | 第 1 轮 | Grav CMS v1.8.0-beta.29 | 1,215 | [public.csv](challenge_hashes_grav-1.8.0-beta.29_public.csv) | 🟢 进行中 |
+
+#### 📊 挑战进展
+
+截至目前，已收到 **10** 份验证提交，经逐一比对哈希清单，**全部命中已有记录**，均已通过邮件回复确认。
+
+感谢每一位参与者的认真验证 — 这正是我们发起挑战赛的初衷：用社区的独立检验来证明审计覆盖度。**欢迎更多安全研究者继续提交**，无论结果是匹配还是遗漏，都是对点星最有价值的反馈。
 
 > **关于严重度口径**：下方哈希表中每条漏洞标注的 severity 为**审计初评**，将依据 [AI 漏洞严重度评级标准](AI漏洞严重度评级标准.md) 统一**重新核定**（主动对抗"往严重报"的倾向），**最终以核定后的严重度为准**。
 
@@ -1739,7 +1766,7 @@ flowchart LR
 <details>
 <summary><b>数据是否可以独立验证？</b></summary>
 
-审计目标全部为公开可获取的开源项目，我们公布了每个项目的名称、版本号和对应的 GitHub 仓库。由于漏洞本身不宜公开披露（Responsible Disclosure），我们通过横向对比实验、召回率基准测试等方式提供间接可验证性。我们也计划通过 [漏洞猎人挑战赛](CHALLENGE.md) 进一步接受社区检验。
+审计目标全部为公开可获取的开源项目，我们公布了每个项目的名称、版本号和对应的 GitHub 仓库。由于漏洞本身不宜公开披露（Responsible Disclosure），我们通过横向对比实验、召回率基准测试等方式提供间接可验证性。我们也计划通过 [漏洞猎人挑战赛](#challenge) 进一步接受社区检验。
 
 </details>
 
